@@ -34,7 +34,7 @@ const pool = mysql.createPool({
 })
 
 app.get('/', (req, res) => {
-    res.render('login');
+    res.render('home_page');
 });
 
 app.post('/', (req, res) => {

@@ -1,0 +1,23 @@
+body {
+    margin: 0;
+}
+
+header{
+    display: flex;
+    height: 80px;
+    background-color: #e3e3e3;
+    align-items: center;
+}
+
+#nama_bank {
+    font-family: Arial, sans-serif;
+    padding-left: 15px;
+    font-size: 45px;
+    font-weight: bolder;
+}
+
+#divlogo {
+    padding-left: 25px;
+    display: flex;
+    height: 65px;
+}
