@@ -1,15 +1,94 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>
-  </title>
+  <title>Bank Name - Home</title>
+  <style>
+    /* Add your CSS styles here */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    .header {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container {
+      margin: 0 auto;
+      padding: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+
+    .main-content {
+      width: 50%;
+    }
+
+    .sidebar {
+      width: 50%;
+    }
+
+    .footer {
+      background-color: #333;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #4CAF50;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 16px;
+        border: none;
+        cursor: pointer;
+        width: 50vh;
+        margin-top: 30px;
+      }
+  
+      button:hover {
+        background-color: #45a049;
+      }
+  </style>
 </head>
 <body>
     <main>
         <%- include ('header') %>
-        <form action="/applicant_form1">
-            <button type="submit">Redirect form</button>
-        </form>
+        <!-- <div class="header">
+    <h1>Bank Sederhana</h1>
+    <p>Selemat Datang!</p>
+  </div> -->
+
+  <div class="container">
+    <div class="main-content">
+      <h2>Selamat datang di Bank Sederhana</h2>
+      <p>Kami menawarkan berbagai layanan perbankan untuk memenuhi kebutuhan finansial Anda. Baik Anda yang mencari solusi perbankan pribadi atau dukungan perbankan bisnis, kami siap membantu Anda.</p>
+
+      <p>Jelajahi layanan kami, pelajari pinjaman kredit kami, dan temukan fitur-fitur perbankan online yang memudahkan Anda dalam mengelola keuangan.</p>
+
+      <p>Bergabunglah dengan Bank Sederhana hari ini dan rasakan layanan pinjaman kredit yang aman dan andal yang mengutamakan Anda.</p>
+
+      <form action="/applicant_form1">
+        <center><button type="submit">Redirect form</button></center>
+    </form>
+    </div>
+
+    <div class="sidebar">
+      <img src="img.jpg">
+    </div>
+  </div>
+
+  <!-- <div class="footer">
+    <p>&copy; 2023 Bank Sederhana. All rights reserved.</p>
+  </div> -->
     </main>
 </body>
 </html>
