@@ -2,24 +2,43 @@
 <html>
 <head>
   <title>Credit Applicant Form</title>
-  <link rel="stylesheet" href="/style/form1_applicant.css">
+  <link rel="stylesheet" href="/style/form_applicant.css">
   <style>
   </style>
 </head>
 <body>
   <%- include ('header') %>
   <h1>Credit Applicant Form</h1>
+  <h2>Data Pekerjaan</h2>
 
   <form action="/submit" method="POST">
     <label for="job">Pekerjaan:</label>
-    <input type="text" id="job" name="job" required>
+    <select id="dropdown_pekerjaan">
+      <option value="karyawan_swasta">Karyawan Swasta</option>
+      <option value="ibu_rumah_tannga">Ibu Rumah Tangga</option>
+      <option value="pegawai_negeri">Pegawai Negeri</option>
+      <option value="tni_polri">TNI/POLRI</option>
+      <option value="pejabat">Pejabat Negara/Daerah</option>
+      <option value="pensiunan">Pensiunan</option>
+      <option value="pengusaha_pabrikan">Pengusaha Pabrikan</option>
+      <option value="pedagang">Pedagang</option>
+      <option value="pengusaha_jasa">Pengusaha Jasa</option>
+      <option value="profesional_lainnya">Profesional Lainnya</option>
+      <option value="dokter">Dokter</option>
+      <option value="pengacara">Pengacara</option>
+      <option value="akuntan">Akuntan</option>
+      <option value="wartawan">Wartawan</option>
+      <option value="seniman">Seniman</option>
+      <option value="notaris">Notaris</option>
+      <option value="lainnya">Lainnya</option>
+    </select>
 
     <label for="position">Jabatan:</label>
     <input type="text" id="position" name="position" required>
 
-    <label for="dropdown">Jenis Usaha:</label>
-    <select id="dropdown">
-        <option value="affiliate">Affiliate Marketing</option>
+    <label for="jenis_usaha">Jenis Usaha:</label>
+    <select id="dropdown_jenis">
+        <!-- <option value="affiliate">Affiliate Marketing</option>
         <option value="dropshipper">Dropshipper</option>
         <option value="reseller">Reseller</option>
         <option value="online_shop">Bisnis Toko Online</option>
@@ -38,11 +57,18 @@
         <option value="sosmed">Social Media Management</option>
         <option value="content">Content Writer</option>
         <option value="translator">Translator</option>
-        <option value="insurance">Agen Asuransi</option>
+        <option value="insurance">Agen Asuransi</option> -->
+        <option value="perdagangan">Perdagangan</option>
+        <option value="jasa">Jasa</option>
+        <option value="produksi">Produksi</option>
+        <option value="pertambangan">Pertambangan</option>
+        <option value="pariwisata">Pariwisata</option>
+        <option value="teknologi">Teknologi</option>
+        <option value="agribisnis">Agribisnis</option>
+        <option value="keuangan">Keuangan</option>
+        <option value="pemerintahan">Pemerintahan</option>
+        <option value="lainnya">Lainnya</option>
     </select>
-
-    <label for="field">Bidang Usaha:</label>
-    <input type="text" id="field" name="field" required>
 
     <label for="company">Nama Perusahaan:</label>
     <input type="text" id="company" name="company" required>

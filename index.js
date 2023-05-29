@@ -4,6 +4,7 @@ import session from 'express-session';
 import memoryStore from 'memorystore';
 import bodyParser from "body-parser";
 import crypto from 'crypto';
+import multer from 'multer';
 
 const app = express();
 const sessionStore = memoryStore(session);
@@ -59,14 +60,34 @@ app.post('/', (req, res) => {
     })
 });
 
-app.get('/officer/home', (req, res) => {
-
-    res.render('home_officer');
+app.get('/employee', (req, res) => {
+    res.render('login');
 });
 
-app.get('/applicant_form', (req, res) => {
+app.get('/officer/home', (req, res) => {
+    if (req.session.role === 'officer'){
+        res.render('home_officer');
+    }
+    else {
+        res.send('Silahkan melakukan login employee')
+    }
+});
 
+app.get('/applicant_form1', (req, res) => {
     res.render('form1_applicant');
 });
+
+app.get('/applicant_form2', (req, res) => {
+    res.render('form2_applicant');
+});
+
+app.get('/applicant_form3', (req, res) => {
+    res.render('form3_applicant');
+});
+
+app.post('/logout', (req,res) => {
+    req.session.destroy();
+    res.redirect('/employee');
+})
 
 app.listen(8080);
