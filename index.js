@@ -26,6 +26,10 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: false }));
 
+var upload = multer({
+    storage: multer.memoryStorage()
+});
+
 const pool = mysql.createPool({
     user: 'root',
     password: '',
@@ -41,27 +45,58 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
     let username = req.body.username
     let password = req.body.password
-    const hashed_pass = crypto
-        .createHash("sha256")
-        .update(password)
-        .digest("hex");
-    pool.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, hashed_pass], (err, result) => {
-        if (result.length > 0){
-            req.session.username = username;
-            //login as admin
-            if (result[0].role === 1) {
-                req.session.role = 'officer';               
-                res.redirect('/officer/home');
-            }
+
+    pool.query('SELECT salt FROM users WHERE username = ?', username, (err, result1) => {
+        if (result1.length > 0){
+            let salted = password.concat(result1[0].salt)
+            const hashed_pass = crypto
+            .createHash("sha256")
+            .update(salted.concat('privdat'))
+            .digest("hex");
+            pool.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, hashed_pass], (err, result2) => {
+                if (result2.length > 0){
+                    req.session.username = username;
+                    req.session.id_user = result2[0].id
+                    if (result2[0].role === 1) {
+                        req.session.role = 'officer';
+                        res.redirect('/officer/home');
+                    }
+                    else if (result2[0].role === 2) {
+                        req.session.role = 'nasabah'; 
+                        pool.query('SELECT nama_lengkap FROM customer_data_main WHERE id_user = ?', req.session.id_user, (err, result3) => {
+                            req.session.nama_lengkap = result3[0].nama_lengkap
+                            res.redirect('/nasabah/home');
+                        })                           
+                    }
+                    else if (result2[0].role === 3) {
+                        req.session.role = 'cs';               
+                        res.redirect('/customer_service/home');
+                    }
+                    
+                }
+                else{
+                    res.send('Email/Password salah!')
+                }
+            })
         }
-        else{
-            res.send(hashed_pass)
+        else {
+            res.send('Email/Password salah!')
         }
     })
 });
 
-app.get('/employee', (req, res) => {
-    res.render('login');
+app.get('/login', (req, res) => {
+    req.session.destroy();
+    res.render('login')
+});
+
+app.get('/nasabah/home', (req, res) => {
+    if (req.session.role === 'nasabah'){
+        res.render('home_nasabah', {nama_lengkap : req.session.nama_lengkap})
+    }
+    else {
+        res.render('access_denied')
+    }
 });
 
 app.get('/officer/home', (req, res) => {
@@ -69,25 +104,126 @@ app.get('/officer/home', (req, res) => {
         res.render('home_officer');
     }
     else {
-        res.send('Silahkan melakukan login employee')
+        res.render('access_denied')
     }
 });
 
-app.get('/applicant_form1', (req, res) => {
-    res.render('form1_applicant');
+app.get('/customer_service/home', (req, res) => {
+    if (req.session.role === 'cs'){
+        res.render('home_cs');
+    }
+    else {
+        res.render('access_denied')
+    }
 });
 
-app.get('/applicant_form2', (req, res) => {
-    res.render('form2_applicant');
+app.get('/nasabah/applicant_form', (req, res) => {
+    if (req.session.role === 'nasabah'){
+        res.render('form_applicant');    }
+    else {
+        res.render('access_denied')
+    }
 });
 
-app.get('/applicant_form3', (req, res) => {
-    res.render('form3_applicant');
-});
+app.post('/nasabah/applicant_form', upload.fields([
+    { name: 'img_npwp', maxCount: 1 },
+    { name: 'img_selfie', maxCount: 1 }
+    ]), (req, res) => {
+    
+    let npwp = req.files['img_npwp'][0].buffer.toString('base64')
+    let selfie = req.files['img_selfie'][0].buffer.toString('base64')
+    let pekerjaan = req.body.dropdown_pekerjaan
+    let jabatan = req.body.jabatan
+    let jenis_usaha = req.body.dropdown_jenis
+    let nama_perusahaan = req.body.company
+    let penghasilan = req.body.income
+    let lama_bekerja_tahun = req.body.year
+    let lama_bekerja_bulan = req.body.month
+    let alamat_perusahaan = req.body.address
+    let kota = req.body.city
+    let kode_pos = req.body.postal
+    let no_telp_kantor = req.body.office
+    let jumlah_pengajuan = req.body.loan
+    let tanggal_pengajuan = new Date()
+    tanggal_pengajuan = tanggal_pengajuan.toISOString().split('T')[0]
+
+    let alasan = req.body.alasan
+    // tanggal_pengajuan = tanggal_pengajuan.toLocaleDateString('en-US', { year: 'numeric', month: '2-digit', day: '2-digit' })
+    // tanggal_pengajuan = tanggal_pengajuan.replace(/\//g, '-')
+
+    // let parts = tanggal_pengajuan.split('-');
+    // let transformedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+
+    // console.log(tanggal_pengajuan)
+
+    pool.query('SELECT id FROM data_pekerjaan WHERE jenis = ?', pekerjaan, (err1, id_pekerjaan) =>{
+        pool.query('SELECT id FROM data_usaha WHERE jenis = ?', jenis_usaha, (err2, id_usaha) =>{
+            pool.query('INSERT INTO customer_data_loan_form VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)', 
+            [null, req.session.id_user, npwp, selfie,
+            id_pekerjaan[0].id, jabatan, id_usaha[0].id, nama_perusahaan,
+            penghasilan, lama_bekerja_tahun, lama_bekerja_bulan, alamat_perusahaan,
+            kota, kode_pos, no_telp_kantor, jumlah_pengajuan, tanggal_pengajuan, alasan], (err, result) =>{
+                if (err){
+                    res.send(err)
+                }
+                else{
+                    res.render('pengajuan_berhasil')
+                }
+            })
+        })
+    })
+})  
+
+app.get('/nasabah/application_management', (req, res) =>{
+    pool.query('SELECT * FROM customer_data_loan_form WHERE id_user = ?', req.session.id_user, (err1, result1) => {
+        pool.query('SELECT * FROM customer_loan_status WHERE id_loan = ?', result1.id, (err2, result2) => {
+            res.render('customer_application_management', {
+                data_loan : result1,
+                data_status : result2
+            })
+        })
+    })
+})
 
 app.post('/logout', (req,res) => {
     req.session.destroy();
-    res.redirect('/employee');
+    res.redirect('/');
+})
+
+app.get('/signup', upload.single('img_ktp'), (req, res) => {
+    res.render('form_signup');
+});
+
+app.post('/signup', upload.single('img_ktp'), (req, res) => {
+    let email = req.body.email
+    let password = req.body.pwd
+    let nama_lengkap = req.body.name
+    let nik = req.body.nik
+    let tanggal_lahir = req.body.dob
+    let no_hp = req.body.phone
+    let alamat = req.body.address
+    let ktp = req.file.buffer.toString('base64')
+
+    let salt = crypto.randomBytes(4).toString('hex')
+    let salted = password.concat(salt)
+    const hashed_pass = crypto
+    .createHash("sha256")
+    .update(salted.concat('privdat'))
+    .digest("hex");
+
+    pool.query('INSERT INTO users VALUES(?, ?, ?, ?, ?)', [null, email, hashed_pass, 2, salt], (err, result1) =>{
+        let id_user = result1.insertId
+        pool.query('INSERT INTO customer_data_main VALUES (?,?,?,?,?,?,?)', [id_user, nama_lengkap, nik, tanggal_lahir, no_hp, alamat, ktp], (err, result2) =>{
+            res.redirect('Sign up berhasil. Silahkan lakukan log in!')
+        })
+    })
+});
+
+app.get('/officer/application_management', (req, res) => {
+    pool.query('SELECT customer_data_main.nama_lengkap, customer_data_loan_form.jumlah_pinjaman, customer_data_loan_form.tanggal_pengajuan FROM customer_data_loan_form JOIN customer_data_main ON customer_data_loan_form.id_user = customer_data_main.id_user',
+    (err, result) => {
+        res.render('application_management.ejs')
+    })
 })
 
 app.listen(8080);

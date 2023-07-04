@@ -7,13 +7,20 @@
   </style>
 </head>
 <body>
-  <%- include ('header') %>
+  <%- include ('header_nasabah') %>
   <h1>Credit Applicant Form</h1>
-  <h2>Data Pekerjaan</h2>
+  
+  <form action="/nasabah/applicant_form" method="POST" method="POST" enctype="multipart/form-data">
+    <h2>Upload Dokumen</h2>
+    <label for="image2">NPWP:</label>
+    <input id="img_npwp" type="file" name="img_npwp" accept="image/*" required>
 
-  <form action="/submit" method="POST">
+    <label for="image3">Foto Selfie:</label>
+    <input id="img_selfie" type="file" name="img_selfie" accept="image/*" required>
+    
+    <h2>Data Pekerjaan</h2>
     <label for="job">Pekerjaan:</label>
-    <select id="dropdown_pekerjaan">
+    <select id="dropdown_pekerjaan" name="dropdown_pekerjaan">
       <option value="karyawan_swasta">Karyawan Swasta</option>
       <option value="ibu_rumah_tannga">Ibu Rumah Tangga</option>
       <option value="pegawai_negeri">Pegawai Negeri</option>
@@ -34,10 +41,10 @@
     </select>
 
     <label for="position">Jabatan:</label>
-    <input type="text" id="position" name="position" required>
+    <input type="text" id="jabatan" name="jabatan" required>
 
     <label for="jenis_usaha">Jenis Usaha:</label>
-    <select id="dropdown_jenis">
+    <select id="dropdown_jenis" name="dropdown_jenis">
         <!-- <option value="affiliate">Affiliate Marketing</option>
         <option value="dropshipper">Dropshipper</option>
         <option value="reseller">Reseller</option>
@@ -74,7 +81,7 @@
     <input type="text" id="company" name="company" required>
 
     <label for="income">Penghasilan per Bulan:</label>
-    <input type="text" id="income" name="income" required>
+    <input type="number" id="income" name="income" min="0">
 
     <label for="employment">Lama Bekerja:</label>
     <div class="row">
@@ -89,10 +96,16 @@
     <input type="text" id="city" name="city" required>
 
     <label for="postal">Kode Pos:</label>
-    <input type="number" id="postal" name="postal" required>
+    <input type="text" id="postal" name="postal" required>
 
     <label for="office">No. Telp Kantor:</label>
-    <input type="tel" id="office" name="office" required>
+    <input type="text" id="office" name="office" required>
+
+    <label for="loan">Jumlah Pinjaman (dalam Rupiah):</label>
+    <input type="number" id="loan" name="loan" min="0">
+
+    <label for="alasan">Alasan: </label>
+    <input type="text" id="alasan" name="alasan" required>
 
     <input type="submit" value="Submit">
   </form>

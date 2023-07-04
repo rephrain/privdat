@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Home</title>
+  <link rel="stylesheet" href="/style/home_officer.css">
+  <style>
+  </style>
+</head>
+<body>
+  <%- include ('header_nasabah') %>
+  <div class="container">
+    <h2>Nasabah Home Page</h2>
+    <center><p>Selamat Datang, <b><%=nama_lengkap%></b>!</p></center>
+    <form action="/nasabah/applicant_form">
+      <button>Ajukan Sekarang!</button>
+    </form>
+  </div>
+</body>
+</html>

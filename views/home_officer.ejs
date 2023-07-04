@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Officer Home Page</title>
+  <title>Home</title>
   <link rel="stylesheet" href="/style/home_officer.css">
   <style>
   </style>
@@ -10,13 +10,10 @@
   <%- include ('header_employee') %>
   <div class="container">
     <h2>Officer Home Page</h2>
-    <p>Welcome, [Admin Name]!</p>
-    <p>As an Officer, you have access to the following functionalities:</p>
-    <ul>
-      <li><a href="user_management.html">User Management</a></li>
-      <li><a href="loan_management.html">Loan Management</a></li>
-      <li><a href="report_generation.html">Report Generation</a></li>
-    </ul>
+    <p>Selamat Datang, Officer!</p>
+    <form action="/officer/application_management">
+      <button>Atur Pengajuan Kredit</button>
+    </form>
   </div>
 </body>
 </html>

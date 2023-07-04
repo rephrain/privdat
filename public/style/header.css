@@ -15,9 +15,21 @@ header{
     padding-left: 15px;
     font-size: 45px;
     font-weight: bolder;
+    padding-right: 100px;
 }
 
-#divlogo {
+#kelola_pinjaman > a{
+    padding-left: 50px;
+    color: black;
+}
+
+#home > a{
+    padding-left: 50px;
+    color: black;
+}
+
+
+#divlogo > a {
     padding-left: 25px;
     display: flex;
     height: 65px;
