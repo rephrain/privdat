@@ -6,13 +6,35 @@
 </head>
 <body>
     <%- include ('header_nasabah') %>
-  <table class="table">
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>1</td>
-        </tr>
-    </tbody>
-  </table>
+    <h2>Status Pengajuan Berlangsung</h2>
+    <div class="container">
+      <% let on_progress = {} %>
+      <% loans.forEach((loan) => { %>
+        <% if (loan.id_loan === null){%>
+          <% on_progress = loan %>
+        <%}%>
+      <% })%>
+      <% tanggal_pengajuan = new Date(on_progress.tanggal_pengajuan) %>
+      <% formatted_tanggal = tanggal_pengajuan.toISOString().split('T')[0] %>
+      <div class="peminjaman">
+        <label for="tanggal_pengajuan" >Tanggal Pengajuan</label>
+        <div id="tanggal_pengajuan"><%= formatted_tanggal%></div>  
+      </div>
+      <br>
+      <div class="peminjaman">
+        <label for="jumlah_pinjaman">Jumlah</label>
+        <div id="jumlah_pinjaman">Rp. <%= on_progress.jumlah_pengajuan%></div>
+      </div>
+      <br>
+      <div class="peminjaman">
+        <label for="alasan">Alasan</label>
+        <div id="alasan"><%= on_progress.alasan%></div>
+      </div>
+      <br>
+      <div class="peminjaman">
+        <label for="status">Status</label>
+        <div id="status">Dalam Proses</div>
+      </div>
+    </div>
 </body>
 </html>

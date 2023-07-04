@@ -175,12 +175,18 @@ app.post('/nasabah/applicant_form', upload.fields([
 })  
 
 app.get('/nasabah/application_management', (req, res) =>{
-    pool.query('SELECT * FROM customer_data_loan_form WHERE id_user = ?', req.session.id_user, (err1, result1) => {
-        pool.query('SELECT * FROM customer_loan_status WHERE id_loan = ?', result1.id, (err2, result2) => {
-            res.render('customer_application_management', {
-                data_loan : result1,
-                data_status : result2
-            })
+    // pool.query('SELECT * FROM customer_data_loan_form WHERE id_user = ?', req.session.id_user, (err1, result1) => {
+    //     pool.query('SELECT * FROM customer_loan_status WHERE id_loan = ?', result1.id, (err2, result2) => {
+    //         res.render('customer_application_management', {
+    //             data_loan : result1,
+    //             data_status : result2
+    //         })
+    //     })
+    // })
+    pool.query('SELECT * FROM customer_data_loan_form LEFT JOIN customer_loan_status ON customer_data_loan_form.id = customer_loan_status.id_loan WHERE customer_data_loan_form.id_user = ?', req.session.id_user, (err, result)=>{
+        console.log(result)
+        res.render('customer_application_management', {
+            loans : result
         })
     })
 })
@@ -212,17 +218,31 @@ app.post('/signup', upload.single('img_ktp'), (req, res) => {
     .digest("hex");
 
     pool.query('INSERT INTO users VALUES(?, ?, ?, ?, ?)', [null, email, hashed_pass, 2, salt], (err, result1) =>{
-        let id_user = result1.insertId
-        pool.query('INSERT INTO customer_data_main VALUES (?,?,?,?,?,?,?)', [id_user, nama_lengkap, nik, tanggal_lahir, no_hp, alamat, ktp], (err, result2) =>{
-            res.redirect('Sign up berhasil. Silahkan lakukan log in!')
+        pool.query('SELECT id FROM users WHERE username = ? AND password = ?', [email, hashed_pass], (err1, resId) => {
+            let id_user = resId[0].id
+            console.log(id_user)
+            pool.query('INSERT INTO customer_data_main VALUES (?,?,?,?,?,?,?,?)', [null, id_user, nama_lengkap, nik, tanggal_lahir, no_hp, alamat, ktp], (err, result2) =>{
+                res.send('Sign up berhasil. Silahkan lakukan log in!')
+            })
         })
     })
 });
 
 app.get('/officer/application_management', (req, res) => {
-    pool.query('SELECT customer_data_main.nama_lengkap, customer_data_loan_form.jumlah_pinjaman, customer_data_loan_form.tanggal_pengajuan FROM customer_data_loan_form JOIN customer_data_main ON customer_data_loan_form.id_user = customer_data_main.id_user',
+    pool.query('SELECT customer_data_loan_form.id, customer_data_main.nama_lengkap, customer_data_loan_form.id_user, customer_data_loan_form.jumlah_pengajuan, customer_data_loan_form.tanggal_pengajuan FROM customer_data_loan_form LEFT JOIN customer_loan_status ON customer_data_loan_form.id = customer_loan_status.id_loan LEFT JOIN customer_data_main ON customer_data_loan_form.id_user = customer_data_main.id_user',
     (err, result) => {
-        res.render('application_management.ejs')
+        res.render('application_management.ejs', {
+            applications : result
+        })
+    })
+})
+
+app.get('/officer/application_management/detail/:id', (req, res) => {
+    const id_loan = req.params.id;
+    pool.query('SELECT * FROM customer_data_loan_form JOIN customer_data_main ON customer_data_loan_form.id_user = customer_data_main.id_user WHERE customer_data_loan_form.id = ?', id_loan, (err, result) =>{
+        res.render('application_detail', {
+            detail : result[0]
+        })
     })
 })
 

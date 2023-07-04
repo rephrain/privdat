@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Application Management</title>
+  <link rel="stylesheet" href="/style/customer_application_management.css">
+  <style>
+  </style>
+</head>
+<body>
+    <%- include ('header_employee') %>
+    <h2>Application Management Detail</h2>
+    <div class="container">
+        <% tanggal_pengajuan = new Date(detail.tanggal_pengajuan) %>
+        <% formatted_tanggal = tanggal_pengajuan.toISOString().split('T')[0] %>
+        <div class="peminjaman">
+            <label for="nama_lengkap" >Nama Lengkap</label>
+            <div id="nama_lengkap"><%= detail.nama_lengkap%></div>  
+          </div>
+          <br>
+        <div class="peminjaman">
+          <label for="tanggal_pengajuan" >Tanggal Pengajuan</label>
+          <div id="tanggal_pengajuan"><%= formatted_tanggal%></div>  
+        </div>
+        <br>
+        <div class="peminjaman">
+          <label for="jumlah_pinjaman">Jumlah</label>
+          <div id="jumlah_pinjaman">Rp. <%= detail.jumlah_pengajuan%></div>
+        </div>
+        <br>
+        <div class="peminjaman">
+          <label for="alasan">Alasan</label>
+          <div id="alasan"><%= detail.alasan%></div>
+        </div>
+        <br>
+      </div>
+</body>
+</html>
